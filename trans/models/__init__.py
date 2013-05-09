@@ -25,3 +25,4 @@ from trans.models.unit import Unit
 from trans.models.unitdata import Check, Suggestion, Comment, IndexUpdate
 from trans.models.changes import Change
 from trans.models.dictionary import Dictionary
+from trans.models.history import History

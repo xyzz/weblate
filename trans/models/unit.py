@@ -29,6 +29,7 @@ from whoosh import qparser
 import traceback
 from trans.checks import CHECKS
 from trans.models.translation import Translation
+from trans.models.history import History
 from trans.search import FULLTEXT_INDEX, SOURCE_SCHEMA, TARGET_SCHEMA
 
 from trans.filelock import FileLockException
@@ -644,6 +645,10 @@ class Unit(models.Model):
 
         # Get old unit from database (for notifications)
         oldunit = Unit.objects.get(id=self.id)
+
+        # Update translation history
+        if oldunit.target != self.target:
+            History.objects.add(self, self.target, request.user)
 
         # Save updated unit to database
         self.save(backend=True)

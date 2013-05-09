@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load translations %}
+
+<table>
+<thead>
+<tr><th>{% trans "When" %}</th><th>{% trans "User" %}</th><th>{% trans "Translation" %}</th><th></th></tr>
+</thead>
+<tbody>
+{% for item in unit.history_set.all %}
+<tr>
+<td>{{ item.timestamp|naturaltime }}</td>
+<td>{{ item.get_user_display }}</td>
+<td class="translatetext">{{ item.target|fmttranslation }}</td>
+<td>
+{% if perms.trans.save_translation and not forloop.last %}
+<a class="historybutton small-button" href="{{ unit.translation.get_translate_url}}?sid={{ search_id }}&amp;offset={{ offset }}&amp;checksum={{ unit.checksum }}&amp;revert={{ item.id }}" title="{% trans "Revert to this translation" %}">{% trans "Revert" %}</a>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>

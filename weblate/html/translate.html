@@ -168,6 +168,7 @@
         <li><a href="#tab-machine" title="{% trans "Machine translation suggestions" %}">{% trans "Machine translation" %}</a></li>
         {% endif %}
         <li><a href="#tab-comments" title="{% trans "Comments about this translation" %}">{% trans "Comments" %}</a></li>
+        <li><a href="#tab-history" title="{% trans "Target history" %}">{% trans "History" %}</a></li>
         <li><a href="#tab-changes" title="{% trans "List of recent changes done in Weblate" %}">{% trans "Recent edits" %}</a></li>
         <li><a href="#tab-source" title="{% trans "Source string details and feedback" %}">{% trans "Source" %}</a></li>
         <li><a href="#tab-search">{% trans "Search" %}</a></li>
@@ -208,6 +209,9 @@
     </ul>
     </div>
     {% endif %}
+    <div id="tab-history">
+    {% include "translation-history.html" %}
+    </div>
     <div id="tab-changes">
     {% include "last-changes.html" %}
     </div>

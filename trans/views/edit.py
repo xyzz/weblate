@@ -32,10 +32,11 @@ from urllib import urlencode
 
 from trans.models import SubProject, Unit, Change
 from trans.models.unitdata import Comment, Suggestion
+from trans.models.history import History
 from trans.forms import (
     TranslationForm, SearchForm,
     MergeForm, AutoForm, ReviewForm,
-    AntispamForm, CommentForm
+    AntispamForm, CommentForm, RevertForm
 )
 from trans.views.helper import get_translation
 from trans.checks import CHECKS
@@ -330,6 +331,45 @@ def handle_merge(obj, request, next_unit_url):
         return HttpResponseRedirect(next_unit_url)
 
 
+def handle_revert(obj, request, next_unit_url):
+    if not request.user.has_perm('trans.save_translation'):
+        # Need privilege to save
+        messages.error(
+            request,
+            _('You don\'t have privileges to save translations!')
+        )
+        return
+
+    revertform = RevertForm(request.GET)
+    if not revertform.is_valid():
+        return
+
+    try:
+        unit = Unit.objects.get_checksum(
+            request,
+            obj,
+            revertform.cleaned_data['checksum'],
+        )
+    except Unit.DoesNotExist:
+        return
+
+    history_entry = History.objects.get(
+        pk=revertform.cleaned_data['revert']
+    )
+
+    if unit.checksum != history_entry.unit.checksum:
+        messages.error(
+            request,
+            _('Can not revert to different unit!')
+        )
+    else:
+        # Store unit
+        unit.target = history_entry.target
+        saved = unit.save_backend(request)
+        # Redirect to next entry
+        return HttpResponseRedirect(next_unit_url)
+
+
 def handle_suggestions(obj, request, this_unit_url):
     '''
     Handles suggestion deleting/accepting.
@@ -432,6 +472,10 @@ def translate(request, project, subproject, lang):
     # Handle translation merging
     elif 'merge' in request.GET and not locked:
         response = handle_merge(obj, request, next_unit_url)
+
+    # Handle reverting
+    elif 'revert' in request.GET and not locked:
+        response = handle_revert(obj, request, this_unit_url)
 
     # Handle accepting/deleting suggestions
     elif not locked and ('accept' in request.GET or 'delete' in request.GET):
