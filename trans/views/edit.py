@@ -599,6 +599,20 @@ def translate(request, project, subproject, lang):
     )
 
 
+def zen(request, project, subproject, lang):
+    obj = get_translation(request, project, subproject, lang)
+    return render_to_response(
+        'zen.html',
+        RequestContext(
+            request,
+            {
+                'units': obj.unit_set.all(),
+                'translation': obj,
+            },
+        )
+    )
+
+
 @login_required
 @permission_required('trans.automatic_translation')
 def auto_translation(request, project, subproject, lang):

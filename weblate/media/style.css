@@ -299,3 +299,23 @@ img.engage-icon {
     padding: 0.5em;
     font-style: italic;
 }
+
+.zen textarea {
+    min-width: 600px;
+    min-height: 50px;
+}
+.zen audio {
+    width: 50px;
+}
+.zen textarea.loading {
+    background: url("./loading.gif") no-repeat bottom right;
+}
+.zen textarea.completed {
+    background-color: #EDFDF4;
+}
+.zen textarea.fail {
+    background-color: #FDEDED;
+}
+.zen textarea.modified {
+    background-color: #FDFCED;
+}

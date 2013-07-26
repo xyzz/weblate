@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load static %}
+{% load translations %}
+
+{% block breadcrumbs %}
+<li><a href="{{ translation.subproject.project.get_absolute_url }}">{{ translation.subproject.project }}</a></li>
+<li><a href="{{ translation.subproject.get_absolute_url }}">{{ translation.subproject.name }}</a></li>
+<li><a href="{{ translation.get_absolute_url }}">{{ translation.language }}</a></li>
+<li><a href="{{ translation.get_translate_url }}">{% trans "zen mode" %}</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="ui-widget ui-corner-all ui-widget-content ui-tooltip" style="position:relative; margin-bottom: 5px;">
+        <code>ctrl-enter</code>: save; <code>ctrl-up</code>: go up; <code>ctrl-down</code>: go down<br/>
+        don't forget to save stuff
+    </div>
+
+    <table class="zen">
+        <tr>
+            <th>#</th>
+            <th>{% trans "Source" %}</th>
+            <th>{% trans "Translation" %}</th>
+            <th></th>
+        </tr>
+        {% for unit in units %}
+            <tr>
+                <td><a href="{{ unit.get_absolute_url }}">{{ unit.position }}</a></td>
+                <td class="translatetext">{{ unit.source|fmttranslation:unit.translation.language }}</td>
+                <td><textarea class="target" data-checksum="{{ unit.checksum }}">{{ unit.target }}</textarea></td>
+                <td>
+                    {% with unit.active_checks as checks %}
+                        {% include "list-checks.html" %}
+                    {% endwith %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <script src="{% get_media_prefix %}zen.js"></script>
+{% endblock %}
